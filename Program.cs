@@ -46,8 +46,11 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
+//runApp(MyApp()) in flutter
 app.Run();
 
+//A record in C# is like a data class or freezed class in Dart. It's immutable by default and
+//perfect for DTOs (Data Transfer Objects).
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
