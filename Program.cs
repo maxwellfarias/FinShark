@@ -10,17 +10,21 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//This finalizes the configuration and creates the actual web application instance.
+//Think of this as the point where Flutter builds your widget tree.
 var app = builder.Build();
 
 //Checks if you're running in development mode (similar to kDebugMode in Flutter).
-//UseSwagger() & UseSwaggerUI(): Only in development,
- //this enables the Swagger UI at /swagger where you can test your API endpoints interactively.
+//UseSwagger() & UseSwaggerUI(): Only in development, this enables the Swagger UI 
+//at /swagger where you can test your API endpoints interactively.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+//This middleware automatically redirects HTTP requests to HTTPS (for security).
+//It's like enforcing secure connections.
 app.UseHttpsRedirection();
 
 var summaries = new[]
