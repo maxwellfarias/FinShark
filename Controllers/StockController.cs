@@ -15,7 +15,7 @@ namespace FinShark.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        //ctro eh a abreviação para construir um controller
+        //ctro eh a abreviação para construir um construtor
         private readonly ApplicationDBContext _context;
         public StockController(ApplicationDBContext context)
         {
