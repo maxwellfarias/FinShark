@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
+using FinShark.Controllers.Dtos.Stock;
 using FinShark.Data;
+using FinShark.Dtos.Stock;
 using FinShark.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -41,14 +43,43 @@ namespace FinShark.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetByIId([FromRoute] int id)
+        public IActionResult GetById([FromRoute] int id)
+        {
+            var stock = _context.Stocks.Find(id)?.ToStockDto();
+            if (stock == null)
+            {
+                return NotFound();
+            }
+            return Ok(stock);
+        }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
+        {
+            var stock = stockDto.ToStockFromCreateDto();
+            _context.Stocks.Add(stock);
+            _context.SaveChanges();
+            return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock.ToStockDto());
+        }
+
+        [HttpPut]
+        [Route("update/{id}")]
+        public IActionResult Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto)
         {
             var stock = _context.Stocks.Find(id);
             if (stock == null)
             {
                 return NotFound();
             }
-            return Ok(stock);
+            stock.Symbol = stockDto.Symbol;
+            stock.CompanyName = stockDto.CompanyName;
+            stock.Purchase = stockDto.Purchase;
+            stock.LastDiv = stockDto.LastDiv;
+            stock.Industry = stockDto.Industry;
+            stock.MarketCap = stockDto.MarketCap;
+
+            _context.SaveChanges();
+            return NoContent(); // Retorna 204 No Content para indicar que a atualização foi bem-sucedida
         }
     }
 }
