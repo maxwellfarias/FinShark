@@ -34,26 +34,11 @@ if (app.Environment.IsDevelopment())
 //It's like enforcing secure connections.
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
 
-//runApp(MyApp()) in flutter
+// It tells ASP.NET Core to discover and wire up all your [ApiController] or Controller classes so their action methods become accessible HTTP endpoints.
+app.MapControllers();
+
 app.Run();
 
 //A record in C# is like a data class or freezed class in Dart. It's immutable by default and
