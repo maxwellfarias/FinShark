@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
 using FinShark.Data;
+using FinShark.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -33,7 +34,8 @@ namespace FinShark.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var stocks = _context.Stocks.ToList();
+            var stocks = _context.Stocks.ToList()
+            .Select(s => s.ToStockDto());
             //retorna uma resposta HTTP 200 OK com o objeto stocks serializado como JSON.
             return Ok(stocks);
         }
