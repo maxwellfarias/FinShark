@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
 using api.Models;
 using FinShark.Controllers.Dtos.Stock;
@@ -10,6 +11,7 @@ using FinShark.Dtos.Stock;
 using FinShark.Mappers;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace FinShark.Controllers
@@ -34,39 +36,45 @@ namespace FinShark.Controllers
             🔒 401 Unauthorized - Não autorizado 
             */
         [HttpGet]
-        public IActionResult GetAll()
+        [Route("getAll")]
+        public async Task<IActionResult> GetAll([FromQuery] int limit = 20, [FromQuery] int offset = 0)
         {
-            var stocks = _context.Stocks.ToList()
-            .Select(s => s.ToStockDto());
+            var total = await _context.Stocks.CountAsync();
+            var stoks = await _context.Stocks
+            .Skip(offset)
+            .Take(limit)
+            .ToListAsync();
             //retorna uma resposta HTTP 200 OK com o objeto stocks serializado como JSON.
-            return Ok(stocks);
+            return Ok(new {total, data = stoks.Select(s => s.ToStockDto())});
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        [HttpGet]
+        [Route("getById")]
+        public async Task<IActionResult> GetById([FromQuery] int id)
         {
-            var stock = _context.Stocks.Find(id)?.ToStockDto();
+            var stock = await _context.Stocks.FindAsync(id);
             if (stock == null)
             {
                 return NotFound();
             }
-            return Ok(stock);
+            return Ok(stock.ToStockDto());
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
+        [Route("create")]
+        public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
             var stock = stockDto.ToStockFromCreateDto();
-            _context.Stocks.Add(stock);
+            await _context.Stocks.AddAsync(stock);
             _context.SaveChanges();
             return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock.ToStockDto());
         }
 
         [HttpPut]
         [Route("update/{id}")]
-        public IActionResult Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto)
         {
-            var stock = _context.Stocks.Find(id);
+            var stock = await _context.Stocks.FindAsync(id);
             if (stock == null)
             {
                 return NotFound();
@@ -79,7 +87,21 @@ namespace FinShark.Controllers
             stock.MarketCap = stockDto.MarketCap;
 
             _context.SaveChanges();
-            return NoContent(); // Retorna 204 No Content para indicar que a atualização foi bem-sucedida
+            return Ok(stock.ToStockDto()); 
+        }
+
+        [HttpDelete]
+        [Route("delete/{id}")]
+        public async Task<IActionResult> delete([FromRoute] int id)
+        {
+            var stock = await _context.Stocks.FindAsync(id);
+            if(stock == null)
+            {
+                return NotFound();
+            } 
+            _context.Stocks.Remove(stock);
+            _context.SaveChanges();
+            return NoContent();
         }
     }
 }
