@@ -1,4 +1,6 @@
+using api.Models;
 using FinShark.Data;
+using FinShark.Repository;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +18,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
         });
+
+builder.Services.AddScoped<IStockRepository, StockRepository>();
 
 //This finalizes the configuration and creates the actual web application instance.
 //Think of this as the point where Flutter builds your widget tree.

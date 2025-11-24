@@ -9,6 +9,7 @@ using FinShark.Controllers.Dtos.Stock;
 using FinShark.Data;
 using FinShark.Dtos.Stock;
 using FinShark.Mappers;
+using FinShark.Repository;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,9 +23,11 @@ namespace FinShark.Controllers
     {
         //ctro eh a abreviação para construir um construtor
         private readonly ApplicationDBContext _context;
-        public StockController(ApplicationDBContext context)
+        private readonly IStockRepository _stockRepository;
+        public StockController(ApplicationDBContext context, IStockRepository stockRepository)
         {
             _context = context;
+            _stockRepository = stockRepository;
         }
 
 
@@ -37,26 +40,18 @@ namespace FinShark.Controllers
             */
         [HttpGet]
         [Route("getAll")]
-        public async Task<IActionResult> GetAll([FromQuery] int limit = 20, [FromQuery] int offset = 0)
+        public async Task<IActionResult> GetAll()
         {
-            var total = await _context.Stocks.CountAsync();
-            var stoks = await _context.Stocks
-            .Skip(offset)
-            .Take(limit)
-            .ToListAsync();
-            //retorna uma resposta HTTP 200 OK com o objeto stocks serializado como JSON.
-            return Ok(new {total, data = stoks.Select(s => s.ToStockDto())});
+            var stocks = await _stockRepository.GetAllAsync();
+            return Ok(stocks);
         }
 
         [HttpGet]
         [Route("getById")]
         public async Task<IActionResult> GetById([FromQuery] int id)
         {
-            var stock = await _context.Stocks.FindAsync(id);
-            if (stock == null)
-            {
-                return NotFound();
-            }
+            var stock = await _stockRepository.GetByIdAsync(id);
+            if (stock == null) return NotFound();
             return Ok(stock.ToStockDto());
         }
 
@@ -65,8 +60,7 @@ namespace FinShark.Controllers
         public async Task<IActionResult> Create([FromBody] CreateStockRequestDto stockDto)
         {
             var stock = stockDto.ToStockFromCreateDto();
-            await _context.Stocks.AddAsync(stock);
-            _context.SaveChanges();
+            await _stockRepository.CreateAsync(stock);
             return CreatedAtAction(nameof(GetById), new { id = stock.Id }, stock.ToStockDto());
         }
 
@@ -74,19 +68,8 @@ namespace FinShark.Controllers
         [Route("update/{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateStockRequestDto stockDto)
         {
-            var stock = await _context.Stocks.FindAsync(id);
-            if (stock == null)
-            {
-                return NotFound();
-            }
-            stock.Symbol = stockDto.Symbol;
-            stock.CompanyName = stockDto.CompanyName;
-            stock.Purchase = stockDto.Purchase;
-            stock.LastDiv = stockDto.LastDiv;
-            stock.Industry = stockDto.Industry;
-            stock.MarketCap = stockDto.MarketCap;
-
-            _context.SaveChanges();
+            var stock = await _stockRepository.UpdateAsync(stockDto, id);
+            if (stock == null) return NotFound();
             return Ok(stock.ToStockDto()); 
         }
 
@@ -94,13 +77,8 @@ namespace FinShark.Controllers
         [Route("delete/{id}")]
         public async Task<IActionResult> delete([FromRoute] int id)
         {
-            var stock = await _context.Stocks.FindAsync(id);
-            if(stock == null)
-            {
-                return NotFound();
-            } 
-            _context.Stocks.Remove(stock);
-            _context.SaveChanges();
+            var stock = await _stockRepository.DeleteAsync(id);
+            if(stock == null) return NotFound();
             return NoContent();
         }
     }
