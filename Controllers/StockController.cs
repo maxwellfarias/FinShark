@@ -28,14 +28,6 @@ namespace FinShark.Controllers
             _stockRepository = stockRepository;
         }
 
-
-        /*IActionResult ermite retornar diferentes tipos de respostas HTTP:
-
-            ✅ 200 OK - Sucesso
-            ❌ 404 NotFound - Recurso não encontrado
-            ⚠️ 400 BadRequest - Requisição inválida
-            🔒 401 Unauthorized - Não autorizado 
-            */
         [HttpGet]
         [Route("getAll")]
         public async Task<IActionResult> GetAll()

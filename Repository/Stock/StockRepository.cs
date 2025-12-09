@@ -45,16 +45,16 @@ namespace FinShark.Repository
             return stock;
         }
 
-        public async Task<Stock?> UpdateAsync(UpdateStockRequestDto stock, int id)
+        public async Task<Stock?> UpdateAsync(UpdateStockRequestDto stockDto, int id)
         {
             var stockModel = await _context.Stocks.FindAsync(id);
             if(stockModel == null) return null;
-            stockModel.Industry = stock.Industry;
-            stockModel.CompanyName = stock.CompanyName;
-            stockModel.LastDiv = stock.LastDiv;
-            stockModel.MarketCap = stock.MarketCap;
-            stockModel.Purchase = stock.Purchase;
-            stockModel.Symbol = stock.Symbol;
+            stockModel.Industry = stockDto.Industry;
+            stockModel.CompanyName = stockDto.CompanyName;
+            stockModel.LastDiv = stockDto.LastDiv;
+            stockModel.MarketCap = stockDto.MarketCap;
+            stockModel.Purchase = stockDto.Purchase;
+            stockModel.Symbol = stockDto.Symbol;
             await _context.SaveChangesAsync();
             return stockModel;
         }
