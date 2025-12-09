@@ -24,7 +24,6 @@ namespace FinShark.Repository
             await _context.SaveChangesAsync();
             return stock;
         }
-
         public async Task<Stock?> DeleteAsync(int id)
         {
             var stock  = await _context.Stocks.FindAsync(id);

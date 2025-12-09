@@ -22,11 +22,9 @@ namespace FinShark.Controllers
     public class StockController : ControllerBase
     {
         //ctro eh a abreviação para construir um construtor
-        private readonly ApplicationDBContext _context;
         private readonly IStockRepository _stockRepository;
         public StockController(ApplicationDBContext context, IStockRepository stockRepository)
         {
-            _context = context;
             _stockRepository = stockRepository;
         }
 

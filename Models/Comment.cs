@@ -15,8 +15,8 @@ namespace api.Models
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         //StockId eh chave estrangeira, para que a navegacao pudesse acontecer, foi necessario declarar o objeto nullable Stock
         //isso permitir devegar dentro desse relacionamento
-        public string AppUserId { get; set; }
-        public AppUser AppUser { get; set; }
+        public string? AppUserId { get; set; }
+        public AppUser? AppUser { get; set; }
         public Stock? Stock { get; set; }
         public int? StockId { get; set; }
     }
