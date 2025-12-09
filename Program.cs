@@ -22,6 +22,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => {
         });
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 
 //This finalizes the configuration and creates the actual web application instance.
 //Think of this as the point where Flutter builds your widget tree.

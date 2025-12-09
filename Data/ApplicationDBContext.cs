@@ -14,7 +14,7 @@ namespace FinShark.Data
 
         }
         public DbSet<Stock> Stocks { get; set; }
-        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Comments> Comments { get; set; }
         public DbSet<Portfolio> Portfolios { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)

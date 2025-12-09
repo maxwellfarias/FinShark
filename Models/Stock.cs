@@ -19,7 +19,7 @@ namespace api.Models
         public string Industry { get; set; } = string.Empty;
         public long MarketCap { get; set; } // Capitalização de mercado
 
-        public List<Comment> Comments { get; set; } = new List<Comment>();
+        public List<Comments> Comments { get; set; } = new List<Comments>();
         public List<Portfolio> Portfolios { get; set; } = new List<Portfolio>();
 
     }

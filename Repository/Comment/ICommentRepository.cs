@@ -8,6 +8,6 @@ namespace FinShark.Repository
 {
     public interface ICommentRepository
     {
-        Task<List<Comment>> GetAllAsync();
+        Task<List<Comments>> GetAllAsync();
     }
 }
