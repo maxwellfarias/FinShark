@@ -9,9 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 //(like Provider or GetIt in Flutter). You register services here that can be injected throughout
 //your app.This is .NET's Dependency Injection container (like Provider or GetIt in Flutter). 
 //You register services here that can be injected throughout your app.
+
+// This line adds support for controllers, which are classes that handle HTTP requests and return responses.
 builder.Services.AddControllers();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// These two lines set up Swagger, a tool for generating interactive API documentation.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -45,9 +47,3 @@ app.MapControllers();
 
 app.Run();
 
-//A record in C# is like a data class or freezed class in Dart. It's immutable by default and
-//perfect for DTOs (Data Transfer Objects).
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
